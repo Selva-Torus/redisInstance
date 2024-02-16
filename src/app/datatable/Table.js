@@ -12,6 +12,17 @@ import ShowSpace from "./ShowSpace";
 import { Button } from "primereact/button";
 import { MdDelete } from "react-icons/md";
 import { MultiSelect } from "primereact/multiselect";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const Table = () => {
   const [keys, setKeys] = useState([]);
@@ -102,14 +113,13 @@ const Table = () => {
     //   });
     // });
     // selectContent.map((key) => deleteData(key).then((res) => console.log(res)));
-    try{
-      await Promise.all(selectContent.map((key)=>deleteData(key))); 
-      setSelectContent([])
-      const updatedKeys=await getAllKeys()
-      setKeys(updatedKeys)
-    }
-    catch(error){
-      console.log(error)
+    try {
+      await Promise.all(selectContent.map((key) => deleteData(key)));
+      setSelectContent([]);
+      const updatedKeys = await getAllKeys();
+      setKeys(updatedKeys);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -121,6 +131,35 @@ const Table = () => {
     <div className="flex overflow-hidden w-full h-screen">
       <div className="flex-shrink-0 overflow-y-auto w-3/4">
         <div className="card flex justify-content-center">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Add item</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add item</DialogTitle>
+              </DialogHeader>
+
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input id="name" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Content
+                  </Label>
+                  <Input id="name" className="col-span-3" />
+
+                </div>
+              </div>
+              <DialogFooter>
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <MultiSelect
             value={selectContent}
             onChange={(e) => setSelectContent(e.value)}

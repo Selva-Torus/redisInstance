@@ -22,7 +22,10 @@ export async function getData(keys) {
   return await redis.call("JSON.GET", keys);
 }
 
-export async function getString(keys) {
+// export async function getData(keys) {
+//   return await redis.call("POST", keys);
+// }
+ export async function getString(keys) {
   const data = await redis.call("GET", keys);
   return data;
 }
