@@ -1,5 +1,6 @@
 "use server";
 import redis from "@/lib/redis";
+import { data } from "autoprefixer";
 export async function getAllKeys() {
   try {
     // Get all keys
@@ -22,9 +23,10 @@ export async function getData(keys) {
   return await redis.call("JSON.GET", keys);
 }
 
-// export async function getData(keys) {
-//   return await redis.call("POST", keys);
-// }
+export async function postData(keys) {
+  // return await redis.call("SET", keys,value);
+  return null;
+}
  export async function getString(keys) {
   const data = await redis.call("GET", keys);
   return data;

@@ -6,6 +6,7 @@ import {
   getAllKeys,
   getData,
   getString,
+  postData,
 } from "@/utilsFunctions/apiCallUnit";
 
 import ShowSpace from "./ShowSpace";
@@ -15,7 +16,6 @@ import { MultiSelect } from "primereact/multiselect";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -30,12 +30,23 @@ const Table = () => {
   const [show, setShow] = useState(null);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(20);
+  const [post,setPost]=useState({key:'',value:''})
   const [selectContent, setSelectContent] = useState(null);
   useEffect(() => {
     getAllKeys().then((data) => {
       setKeys(data);
     });
   }, []);
+ 
+  const handlePost= (post)=>{
+    postData(post.key,post.value)
+    .then(()=>{
+      getAllKeys().then((data)=>{
+        setData(data)
+      })
+    })
+  }
+
 
   const handleDelete = (key) => {
     deleteData(key).then((data) => {
@@ -116,7 +127,7 @@ const Table = () => {
     try {
       await Promise.all(selectContent.map((key) => deleteData(key)));
       setSelectContent([]);
-      const updatedKeys = await getAllKeys();
+      const updatedKeys = await getAllKeys()
       setKeys(updatedKeys);
     } catch (error) {
       console.log(error);
@@ -139,25 +150,24 @@ const Table = () => {
               <DialogHeader>
                 <DialogTitle>Add item</DialogTitle>
               </DialogHeader>
-
               <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input id="name" className="col-span-3" />
-                </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="name" className="text-right">
                     Content
                   </Label>
-                  <Input id="name" className="col-span-3" />
-
+                  <Input id="name" onChange={(e)=>setPost({ ...post,key:e.target.value})} className="col-span-3" />
+                </div>  
+                
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Value
+                  </Label>
+                  <Input id="name" className="col-span-3" onChange={(e)=>setPost({ ...post,value:e.target.value})}/>
                 </div>
               </div>
               <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
+                <Button type="submit" onClick={()=>{handlePost(post)}}>Save changes</Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
           <MultiSelect
