@@ -1,35 +1,93 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Toast } from "primereact/toast";
+
 import {
+  deleteAllData,
   deleteData,
   getAllKeys,
   getData,
   getString,
+  postData,
 } from "@/utilsFunctions/apiCallUnit";
 
 import ShowSpace from "./ShowSpace";
 import { Button } from "primereact/button";
 import { MdDelete } from "react-icons/md";
 import { MultiSelect } from "primereact/multiselect";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const Table = () => {
+  const toast = useRef(null);
+
   const [keys, setKeys] = useState([]);
   const [data, setData] = useState(null);
   const [show, setShow] = useState(null);
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(20);
+  const [post, setPost] = useState({
+    key: "",
+    value: "",
+    jsonContent: false,
+    valueType: "string",
+  });
   const [selectContent, setSelectContent] = useState(null);
   useEffect(() => {
-    getAllKeys().then((data) => {
-      setKeys(data);
-    });
+    const fetchData = async () => {
+      try {
+        const data = await getAllKeys();
+        setKeys(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    fetchData();
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 3000);
+    return () => clearInterval(intervalId);
   }, []);
+
+  const showToast = (type, title, message) => {
+    toast.current.show({ severity: type, summary: title, detail: message });
+  };
+
+  const handlePost = async (post) => {
+    try {
+      await postData(post.key, post.value, post.jsonContent, post.valueType);
+      const data = await getAllKeys();
+      if (Array.isArray(data) && data.length > 0) {
+        setData(data);
+        showToast(
+          "success",
+          "Post successful",
+          "Data has been posted successfully."
+        );
+      } else {
+        showToast("error", "Post failed", "Data has not been posted.");
+      }
+    } catch (error) {
+      showToast("error", "Post failed", "Data has not been posted.");
+    }
+  };
 
   const handleDelete = (key) => {
     deleteData(key).then((data) => {
       getAllKeys().then((data) => {
         setKeys(data);
+        showToast("warn", "Delete successful", "Data has been deleted.");
       });
     });
   };
@@ -56,7 +114,7 @@ const Table = () => {
   }));
 
   useEffect(() => {
-    console.log(selectContent);
+    // console.log(selectContent);
   }, [selectContent]);
 
   const handleShow = (item) => {
@@ -95,23 +153,39 @@ const Table = () => {
   }));
 
   const handleBulkDelete = async () => {
-    // Promise.all(selectContent.map((key) => deleteData(key))).then(() => {
-    //   setSelectContent([]);
-    //   getAllKeys().then((data) => {
-    //     setKeys(data);
-    //   });
-    // });
-    // selectContent.map((key) => deleteData(key).then((res) => console.log(res)));
-    try{
-      await Promise.all(selectContent.map((key)=>deleteData(key))); 
-      setSelectContent([])
-      const updatedKeys=await getAllKeys()
-      setKeys(updatedKeys)
-    }
-    catch(error){
-      console.log(error)
+    try {
+      // console.log(selectContent,"my cont");
+      await Promise.all(selectContent.map((key) => deleteData(key.name)));
+      setSelectContent([]);
+      const updatedKeys = await getAllKeys();
+      setKeys(updatedKeys);
+      showToast(
+        "warn",
+        "Delete successful",
+        "Data has been deleted successfully."
+      );
+    } catch (error) {
+      if (error) {
+        showToast("error", "Delete failed", "Data has not been deleted.");
+      }
     }
   };
+
+  // Promise.all(selectContent.map((key) => deleteData(key))).then(() => {
+  //   setSelectContent([]);
+  //   getAllKeys().then((data) => {
+  //     setKeys(data);
+  //   });
+  // });
+  // selectContent.map((key) => deleteData(key).then((res) => console.log(res)));
+  // try {
+  //   await Promise.all(selectContent.map((key) => deleteData(key)));
+  //   setSelectContent([]);
+  //   const updatedKeys = await getAllKeys();
+  //   setKeys(updatedKeys);
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   //   const handleFilter = (e) => {
   //     setFilterData(e.target.value);
@@ -119,8 +193,97 @@ const Table = () => {
 
   return (
     <div className="flex overflow-hidden w-full h-screen">
+      <Toast ref={toast} />
       <div className="flex-shrink-0 overflow-y-auto w-3/4">
         <div className="card flex justify-content-center">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className=" mt-4 p-2 rounded bg-blue-500 text-white gap-2"
+              >
+                Add item
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add item</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Content
+                  </Label>
+                  <Input
+                    id="name"
+                    onChange={(e) => setPost({ ...post, key: e.target.value })}
+                    className="col-span-3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Type
+                  </Label>
+                  <select
+                    id="valueType"
+                    className="col-span-3"
+                    onChange={(e) =>
+                      setPost({ ...post, valueType: e.target.value })
+                    }
+                  >
+                    <option value="none">None</option>
+                    <option value="json">JSON</option>
+                    <option value="string">String</option>
+                  </select>
+                </div>
+
+                {post.valueType === "json" ? (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="jsonContent" className="text-right">
+                      JSON Content
+                    </Label>
+                    <Textarea
+                      id="jsonContent"
+                      onChange={(e) =>
+                        setPost({ ...post, jsonContent: e.target.value })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="value" className="text-right">
+                        Value
+                      </Label>
+                      <Input
+                        id="value"
+                        onChange={(e) =>
+                          setPost({ ...post, value: e.target.value })
+                        }
+                        className="col-span-3"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+              <DialogFooter>
+                <DialogClose>
+                  <Button
+                    type="submit"
+                    onClick={() => {
+                      handlePost(post);
+                    }}
+                    className="bg-blue-500 p-2 text-white"
+                    variant="outline"
+                  >
+                    Save changes
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <MultiSelect
             value={selectContent}
             onChange={(e) => setSelectContent(e.value)}
@@ -166,7 +329,9 @@ const Table = () => {
         {selectContent && (
           <Button
             onClick={handleBulkDelete}
-            label="DELETES"
+            label="All DELETE"
+            hidden={selectContent.length === 0}
+            icon={<MdDelete />}
             className="p-button-danger"
           />
         )}

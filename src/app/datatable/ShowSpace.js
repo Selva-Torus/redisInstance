@@ -10,7 +10,7 @@ const ShowSpace = ({data,show}) => {
   //   const res = await scanData()
   //   console.log(res);
   // }
-    
+    console.log(data);
   return (
     <div>
       {/* <button className="bg-blue-500 text-white p-2" onClick={handleScan}> getData here</button> */}
