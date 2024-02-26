@@ -41,7 +41,7 @@ const Table = () => {
     key: "",
     value: "",
     jsonContent: false,
-    valueType: "string",
+    valueType: "",
   });
   const [selectContent, setSelectContent] = useState(null);
   useEffect(() => {
@@ -91,7 +91,6 @@ const Table = () => {
       });
     });
   };
-
   const dataObjects = keys.map((item, index) => ({
     id: index + 1,
     value: item.key,
@@ -170,7 +169,7 @@ const Table = () => {
       }
     }
   };
-
+console.log(post,"POOOST");
   // Promise.all(selectContent.map((key) => deleteData(key))).then(() => {
   //   setSelectContent([]);
   //   getAllKeys().then((data) => {
@@ -215,7 +214,7 @@ const Table = () => {
                     Content
                   </Label>
                   <Input
-                    id="name"
+                    id="key"
                     onChange={(e) => setPost({ ...post, key: e.target.value })}
                     className="col-span-3"
                   />
@@ -228,6 +227,7 @@ const Table = () => {
                   <select
                     id="valueType"
                     className="col-span-3"
+                    value={post.valueType}
                     onChange={(e) =>
                       setPost({ ...post, valueType: e.target.value })
                     }
@@ -235,10 +235,17 @@ const Table = () => {
                     <option value="none">None</option>
                     <option value="json">JSON</option>
                     <option value="string">String</option>
+                    <option value="hash">Hash</option>
+                    <option value="list">List</option>
+                    <option value="set">Set</option>
+                    <option value="sorted-set">Sorted Set</option>
+                    <option value="stream">Stream</option>
+                    <option value="graph">Graph</option>
+                    <option value="ts">TS</option>
                   </select>
                 </div>
 
-                {post.valueType === "json" ? (
+                { post.valueType === "json" ? (
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="jsonContent" className="text-right">
                       JSON Content
@@ -273,7 +280,10 @@ const Table = () => {
                   <Button
                     type="submit"
                     onClick={() => {
+                      if(post.key!=="" && post.value!==""){
                       handlePost(post);
+                      }
+                      setPost({ ...post, valueType: "none" });
                     }}
                     className="bg-blue-500 p-2 text-white"
                     variant="outline"
@@ -313,7 +323,7 @@ const Table = () => {
             filterPlaceholder="Search by value"
           />
           <Column
-            field="type"
+            field= "type"
             header="Type"
             filter
             filterPlaceholder="Search by Type"

@@ -24,10 +24,30 @@ export async function getData(keys) {
   return await redis.call("JSON.GET", keys);
 }
 
-export async function postData(keys, value, jsonContent, type) {
-  
+export async function postData(
+  keys,
+  value,
+  jsonContent,
+  type,
+  index,
+  listContent
+) {
   if (type == "json") {
     await redis.call("JSON.SET", keys, "$", jsonContent);
+  } else if (type == "hash") {
+    await redis.call("HGET", keys, value);
+  } else if (type == "list") {
+    await redis.call("LSET", keys, index, listContent);
+  } else if (type == "set") {
+    await redis.call("SADD", keys, ...value);
+  } else if (type == "sortedset") {
+    const zsetValues = [];
+    value.forEach((item, index) => {
+      zsetValues.push(item, index + 1);
+    });
+    await redis.call("ZADD", keys, ...zsetValues);
+  } else if (type == "stream") {
+    await redis.call("XADD", keys, "*", ...value);
   } else {
     await redis.call("SET", keys, value);
   }
