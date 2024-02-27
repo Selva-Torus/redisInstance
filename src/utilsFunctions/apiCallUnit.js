@@ -35,7 +35,8 @@ export async function getData(key, keyType) {
     case "stream":
       return await redis.xrange(key, "-", "+");
     case "ReJSON-RL":
-      return await redis.call("JSON.GET", key);
+      const res = await redis.call("JSON.GET", key);
+      return JSON.parse(res);
     default:
       return "";
   }
