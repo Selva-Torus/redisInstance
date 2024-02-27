@@ -1,6 +1,5 @@
 "use server";
 import redis from "@/lib/redis";
-import util from "util";
 
 export async function getAllKeys() {
   try {
@@ -20,8 +19,26 @@ export async function getAllKeys() {
     console.error("Error:", error);
   }
 }
-export async function getData(keys) {
-  return await redis.call("JSON.GET", keys);
+
+export async function getData(key, keyType) {
+  switch (keyType) {
+    case "string":
+      return await redis.get(key);
+    case "hash":
+      return await redis.hgetall(key);
+    case "list":
+      return await redis.lrange(key, 0, -1);
+    case "set":
+      return await redis.smembers(key);
+    case "zset":
+      return await redis.zrange(key, 0, -1, "WITHSCORES");
+    case "stream":
+      return await redis.xrange(key, "-", "+");
+    case "ReJSON-RL":
+      return await redis.call("JSON.GET", key);
+    default:
+      return "";
+  }
 }
 
 export async function postData(post) {
@@ -86,9 +103,3 @@ export async function deleteData(key) {
 //   const deletedKey = await redis.flushdb();
 //   return 'ellathayum delete panniten daaaaa'
 // }
-
-export async function scanData() {
-  const keyPattern = "DF:*";
-  const [cursor, keys] = await redis.scan(0, "MATCH", keyPattern);
-  return keys;
-}
