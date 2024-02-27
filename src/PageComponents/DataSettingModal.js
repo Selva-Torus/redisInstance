@@ -23,8 +23,6 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
 
   const handleRestValueChange = (e) =>{
     const { name, value } = e.target;
-    // const keyNumber = parseInt(name.match(/\d+/)[0]);
-    // const isKey = name.startsWith("key");
     setPost((prevPost) => ({
       ...prevPost,
       restValues: {
