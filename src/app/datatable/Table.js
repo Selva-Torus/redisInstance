@@ -4,11 +4,9 @@ import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 
 import {
-  deleteAllData,
   deleteData,
   getAllKeys,
   getData,
-  getString,
   postData,
 } from "@/utilsFunctions/apiCallUnit";
 
@@ -53,6 +51,7 @@ const Table = () => {
     toast.current.show({ severity: type, summary: title, detail: message });
   };
 
+
   const handlePost = async (post) => {
     try {
       const data = await postData(post);
@@ -75,6 +74,7 @@ const Table = () => {
       showToast("warn", "Delete successful", "Data has been deleted.");
     });
   };
+  console.log(data,"mrygbid");
   const dataObjects = keys.map((item, index) => ({
     id: index + 1,
     value: item.key,
@@ -85,7 +85,7 @@ const Table = () => {
           <MdDelete size={25} />
         </div>
         <Button
-          onClick={() => handleShow(item)}
+          onClick={() => handleShow(item) }
           className="border-[1px] p-1 px-4 rounded-xl bg-blue-500 text-white"
           severity="success"
         >
@@ -95,10 +95,18 @@ const Table = () => {
     ),
   }));
 
-  console.log(post);
-  const handleShow = async (item) => {
-    const data = await getString(item.key);
-    console.log(data);
+
+  const handleShow = async (data) => {
+    const { key , type } = data;
+    const res = await getData(key , type);
+    if(res){
+      setShow(true)
+      setData(res)
+    }
+    else{
+      showToast("error", "Get failed", "Data has not been fetched.");
+    }
+    console.log(res);
   };
 
   const onPageChange = (event) => {
@@ -216,103 +224,3 @@ const Table = () => {
 };
 
 export default Table;
-
-{
-  /* <Dialog>
-<DialogTrigger asChild>
-  <Button
-    variant="outline"
-    className=" mt-4 p-2 rounded bg-blue-500 text-white gap-2"
-  >
-    Add item
-  </Button>
-</DialogTrigger>
-<DialogContent className="sm:max-w-[425px]">
-  <DialogHeader>
-    <DialogTitle>Add item</DialogTitle>
-  </DialogHeader>
-  <div className="grid gap-4 py-4">
-    <div className="grid grid-cols-4 items-center gap-4">
-      <Label htmlFor="name" className="text-right">
-        Content
-      </Label>
-      <Input
-        id="key"
-        onChange={(e) => setPost({ ...post, key: e.target.value })}
-        className="col-span-3"
-      />
-    </div>
-
-    <div className="grid grid-cols-4 items-center gap-4">
-      <Label htmlFor="name" className="text-right">
-        Type
-      </Label>
-      <select
-        id="valueType"
-        className="col-span-3"
-        value={post.valueType}
-        onChange={(e) =>
-          setPost({ ...post, valueType: e.target.value })
-        }
-      >
-        <option value="none">None</option>
-        <option value="json">JSON</option>
-        <option value="string">String</option>
-        <option value="hash">Hash</option>
-        <option value="list">List</option>
-        <option value="set">Set</option>
-        <option value="sorted-set">Sorted Set</option>
-        <option value="stream">Stream</option>
-        <option value="graph">Graph</option>
-      </select>
-    </div>
-
-    {post.valueType === "json" ? (
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="jsonContent" className="text-right">
-          JSON Content
-        </Label>
-        <Textarea
-          id="jsonContent"
-          onChange={(e) =>
-            setPost({ ...post, jsonContent: e.target.value })
-          }
-          className="col-span-3"
-        />
-      </div>
-    ) : (
-      <>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="value" className="text-right">
-            Value
-          </Label>
-          <Input
-            id="value"
-            onChange={(e) =>
-              setPost({ ...post, value: e.target.value })
-            }
-            className="col-span-3"
-          />
-        </div>
-      </>
-    )}
-  </div>
-  <DialogFooter>
-    <DialogClose>
-      <Button
-        type="submit"
-        onClick={(e) => {
-         
-            handlePost(post);
-         
-        }}
-        className="bg-blue-500 p-2 text-white"
-        variant="outline"
-      >
-        Save changes
-      </Button>
-    </DialogClose>
-  </DialogFooter>
-</DialogContent>
-</Dialog> */
-}
