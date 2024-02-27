@@ -57,6 +57,7 @@ const Table = () => {
       const data = await postData(post);
       if (data) {
         fetchData();
+        setVisible(prev => !prev)
         showToast(
           "success",
           "Posted Successfully",
@@ -176,6 +177,15 @@ const Table = () => {
               setPost={setPost}
             />
           </Dialog>
+          {selectContent && (
+          <Button
+            onClick={handleBulkDelete}
+            label="Delete "
+            hidden={selectContent.length === 0}
+            icon={<MdDelete />}
+            className="p-button-danger ml-2"
+          />
+        )}
         </div>
         <DataTable
           value={dataObjects}
@@ -208,15 +218,7 @@ const Table = () => {
         </DataTable>
       </div>
       <div className="flex-shrink-0 overflow-y-auto w-1/4 mt-5">
-        {selectContent && (
-          <Button
-            onClick={handleBulkDelete}
-            label="All DELETE"
-            hidden={selectContent.length === 0}
-            icon={<MdDelete />}
-            className="p-button-danger"
-          />
-        )}
+        
         {data && show && <ShowSpace data={data} show={show} />}
       </div>
     </div>
