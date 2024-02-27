@@ -69,7 +69,7 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
           </select>
         </div>
 
-        {(post.valueType === "string" || "none") && (
+        {(post.valueType === "string") && (
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="value" className="text-right">
               Value
