@@ -1,5 +1,4 @@
 "use client"
-import Demo from "@/PageComponents/Demo";
 import Login from "@/PageComponents/Login";
 import { useRouter } from "next/navigation";
 import "primereact/resources/primereact.min.css";
@@ -16,8 +15,7 @@ export default function Home() {
 
   return (
     <main >
-      {/* <Login/> */}
-      <Demo/>
+      <Login/>
     </main>
   );
 }
