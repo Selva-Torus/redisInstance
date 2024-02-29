@@ -13,15 +13,25 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
     setCount(arr);
   };
 
+  const options = [
+    { value: "none", label: "None" },
+    { value: "json", label: "Json" },
+    { value: "string", label: "String" },
+    { value: "hash", label: "Hash" },
+    { value: "list", label: "List" },
+    { value: "set", label: "Set" },
+    { value: "sorted-set", label: "Sorted Set" },
+    { value: "stream", label: "Stream" },
+  ];
   useEffect(() => {
     setCount([1]);
-    setPost((prev)=>({
-      ...prev , 
-      restValues : {}
-    }))
+    setPost((prev) => ({
+      ...prev,
+      restValues: {},
+    }));
   }, [post.valueType]);
 
-  const handleRestValueChange = (e) =>{
+  const handleRestValueChange = (e) => {
     const { name, value } = e.target;
     setPost((prevPost) => ({
       ...prevPost,
@@ -30,11 +40,11 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
         [name]: value,
       },
     }));
-  }
+  };
   return (
     <>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
+      <div className="flex flex-col justify-center items-center gap-4 py-2">
+        <div className="  items-center gap-4">
           <Label htmlFor="name" className="text-right">
             Key
           </Label>
@@ -55,19 +65,15 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
             value={post.valueType}
             onChange={(e) => setPost({ ...post, valueType: e.target.value })}
           >
-            <option value="none">None</option>
-            <option value="json">JSON</option>
-            <option value="string">String</option>
-            <option value="hash">Hash</option>
-            <option value="list">List</option>
-            <option value="set">Set</option>
-            <option value="sorted-set">Sorted Set</option>
-            <option value="stream">Stream</option>
-            <option value="graph">Graph</option>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
 
-        {(post.valueType === "string") && (
+        {post.valueType === "string" && (
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="value" className="text-right">
               Value
@@ -93,13 +99,14 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
             />
           </div>
         )}
-        {["hash", "stream"].includes(
-          post.valueType
-        ) && (
+        {["hash", "stream"].includes(post.valueType) && (
           <div className="flex flex-col">
             <div>
               {count.map((item) => (
-                <div className="flex justify-center w-[90%] gap-2 p-1" key={item}>
+                <div
+                  className="flex justify-center w-[90%] gap-2 p-1"
+                  key={item}
+                >
                   <Input
                     className="w-1/2"
                     type="text"
@@ -120,36 +127,34 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
             <Button onClick={handleClick}> Add Column </Button>
           </div>
         )}
-        {
-          ["graph", "list", "set", "sorted-set"].includes(
-            post.valueType
-          ) && (
-            <div className="flex flex-col">
-              <div>
-                {count.map((item) => (
-                  <div className="flex justify-center w-[90%] gap-2 p-1" key={item}>
-                   
-                    <Input
-                      className="w-3/4"
-                      type="text"
-                      name={`value${item}`}
-                      onChange={handleRestValueChange}
-                      placeholder={`Enter value for value${item}`}
-                    />
-                  </div>
-                ))}
-              </div>
-              <Button onClick={handleClick}> Add Column </Button>
+        {["graph", "list", "set", "sorted-set"].includes(post.valueType) && (
+          <div className="flex flex-col">
+            <div>
+              {count.map((item) => (
+                <div
+                  className="flex justify-center w-[90%] gap-2 p-1"
+                  key={item}
+                >
+                  <Input
+                    // className="w-3/4"
+                    type="text"
+                    name={`value${item}`}
+                    onChange={handleRestValueChange}
+                    placeholder={`Enter value for value${item}`}
+                  />
+                </div>
+              ))}
             </div>
-          )
-        }
+            <Button onClick={handleClick}> Add Column </Button>
+          </div>
+        )}
 
         <Button
           type="submit"
           onClick={(e) => {
             handlePost(post);
           }}
-          className="bg-blue-500 p-2 text-white text-center"
+          className="bg-blue-500 p-2 text-white flex justify-center items-center "
           variant="outline"
         >
           Save changes
