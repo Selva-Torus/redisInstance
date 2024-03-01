@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <h2 className="text-center font-bold pt-2 text-gray-400">Redis Custom DB Instance</h2>
+        <h2 className="text-center font-bold pt-2 text-gray-400">Torus Insight Redis Tool</h2>
         {children}
         </body>
     </html>

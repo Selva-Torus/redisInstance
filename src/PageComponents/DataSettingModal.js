@@ -44,7 +44,8 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
   return (
     <>
       <div className="flex flex-col justify-center items-center gap-4 py-2">
-        <div className="  items-center gap-4">
+        <div className="flex gap-2">
+        <div className="  ">
           <Label htmlFor="name" className="text-right">
             Key
           </Label>
@@ -55,13 +56,13 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
           />
         </div>
 
-        <div className="grid grid-cols-4 items-center gap-4">
+        <div className="">
           <Label htmlFor="name" className="text-right">
             Type
           </Label>
           <select
             id="valueType"
-            className="col-span-3"
+            className="border-none w-full h-10"
             value={post.valueType}
             onChange={(e) => setPost({ ...post, valueType: e.target.value })}
           >
@@ -72,9 +73,10 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
             ))}
           </select>
         </div>
+        </div>
 
         {post.valueType === "string" && (
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className="">
             <Label htmlFor="value" className="text-right">
               Value
             </Label>
@@ -152,7 +154,9 @@ const DataSettingModal = ({ post, setPost, handlePost }) => {
         <Button
           type="submit"
           onClick={(e) => {
-            handlePost(post);
+            if(post.key && post.valueType){
+              handlePost(post);
+            }
           }}
           className="bg-blue-500 p-2 text-white flex justify-center items-center "
           variant="outline"
