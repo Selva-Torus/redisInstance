@@ -161,8 +161,8 @@ const Table = () => {
             />
           </Dialog>
         </div>
-        <div className={`overflow-hidden ${data ? 'flex gap-1': null}`}>
-      <div className={`${data ? ' overflow-y-auto w-3/4': null}` }>
+        <div className={`overflow-hidden h-[80vh] ${data ? 'flex gap-1': null}`}>
+      <div className={` ${data ? ' overflow-y-auto w-3/4': null}` }>
         <DataTable
           value={dataObjects}
           first={first}
@@ -195,7 +195,7 @@ const Table = () => {
           />
         </DataTable>
       </div>
-      <div className={`${data ? 'overflow-y-auto w-1/4': null}`}>
+      <div className={`min-h-screen ${data ? 'overflow-y-auto w-1/4': null}`}>
         {data && <ShowSpace data={data} selectedKey={selectedKey} selectedDataType={selectedDataType}/>}
       </div>
 
