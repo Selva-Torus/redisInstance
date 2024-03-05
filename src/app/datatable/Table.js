@@ -28,8 +28,8 @@ const Table = () => {
   });
   const [selectContent, setSelectContent] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [selectedKey , setSelectedKey] = useState('');
-  const [selectedDataType , setSelectedDataType] = useState('');
+  const [selectedKey, setSelectedKey] = useState("");
+  const [selectedDataType, setSelectedDataType] = useState("");
 
   const fetchData = async () => {
     try {
@@ -58,7 +58,7 @@ const Table = () => {
           "Posted Successfully",
           `value posted for the redis key ${post.key}`
         );
-      }else{
+      } else {
         showToast("error", "Post failed", "Data has not been posted.");
       }
     } catch (error) {
@@ -68,7 +68,7 @@ const Table = () => {
 
   const dataObjects = keys.map((item, index) => ({
     id: index + 1,
-    key : item.key,
+    key: item.key,
     type: item.type,
   }));
 
@@ -94,19 +94,20 @@ const Table = () => {
 
   const handleBulkDelete = async () => {
     try {
-     const res = await Promise.all(selectContent.map((key) => deleteData(key.name)));
-     if(res){
-      setSelectContent([]);
-      const updatedKeys = await getAllKeys();
-      setKeys(updatedKeys);
+      const res = await Promise.all(
+        selectContent.map((key) => deleteData(key.name))
+      );
+      if (res) {
+        setSelectContent([]);
+        const updatedKeys = await getAllKeys();
+        setKeys(updatedKeys);
         showToast(
           "warn",
           "Delete successful",
           "Data has been deleted successfully."
         );
-      }else{
+      } else {
         showToast("error", "Delete failed", "Data has not been deleted.");
-
       }
     } catch (error) {
       if (error) {
@@ -118,87 +119,96 @@ const Table = () => {
   return (
     <div>
       <Toast ref={toast} />
-        <div className="flex w-full px-2 py-2 gap-2 justify-center my-3 shadow">
-          <MultiSelect
-            value={selectContent}
-            onChange={(e) => setSelectContent(e.value)}
-            options={selectedObject}
-            optionLabel="name"
-            filter
-            placeholder="Select keys to perform action"
-            maxSelectedLabels={1}
-            className="w-20px md:w-20rem"
-          />
-          {selectContent.length ? (
-            <button
-            className="border-[1px] py-0 px-4 rounded-xl bg-red-500 text-white"
-          onClick={handleBulkDelete}
-            >Delete</button>
-          ): null}
+      <div className="flex w-full px-2 py-2 gap-2 justify-center my-3 shadow">
+        <MultiSelect
+          value={selectContent}
+          onChange={(e) => setSelectContent(e.value)}
+          options={selectedObject}
+          optionLabel="name"
+          filter
+          placeholder="Select keys to perform action"
+          maxSelectedLabels={1}
+          className="w-20px md:w-20rem"
+        />
+        {selectContent.length ? (
           <button
-            className="border-[1px] py-0 px-4 rounded-xl bg-blue-500 text-white"
-            onClick={() => setVisible(true)}
-          >New</button>
-          <Dialog
-            header="Post Data"
-            visible={visible}
-            style={{ width: "30vw" }}
-            onHide={() => {
-              setVisible(false);
-              setPost({
-                key: "",
-                value: "",
-                jsonContent: false,
-                valueType: "",
-                restValues: {},
-              });
-            }}
+            className="border-[1px] py-0 px-4 rounded-xl bg-red-500 text-white"
+            onClick={handleBulkDelete}
           >
-            <DataSettingModal
-              handlePost={handlePost}
-              post={post}
-              setPost={setPost}
-            />
-          </Dialog>
-        </div>
-        <div className={`overflow-hidden h-[80vh] ${data ? 'flex gap-1': null}`}>
-      <div className={` ${data ? ' overflow-y-auto w-3/4': null}` }>
-        <DataTable
-          value={dataObjects}
-          first={first}
-          showGridlines={true}
-          stripedRows
-          loading={!dataObjects || dataObjects.length === 0}
-          rowHover
-          onRowClick={(e) => handleGetData(e.data)}
-          paginator
-          size="small"
-          rows={rows}
-          rowsPerPageOptions={[10, 20]}
-          onPageChange={onPageChange}
-          tableStyle={{ minWidth: "50rem" }}
+            Delete
+          </button>
+        ) : null}
+        <button
+          className="border-[1px] py-0 px-4 rounded-xl bg-blue-500 text-white"
+          onClick={() => setVisible(true)}
         >
-          <Column sortable field="id" header="ID" />
-          <Column
-            sortable
-            field="key"
-            header="Content"
-            filter
-            filterPlaceholder="Search by value"
+          New
+        </button>
+        <Dialog
+          header="Post Data"
+          visible={visible}
+          style={{ width: "30vw" }}
+          onHide={() => {
+            setVisible(false);
+            setPost({
+              key: "",
+              value: "",
+              jsonContent: false,
+              valueType: "",
+              restValues: {},
+            });
+          }}
+        >
+          <DataSettingModal
+            handlePost={handlePost}
+            post={post}
+            setPost={setPost}
           />
-          <Column
-            field="type"
-            header="Type"
-            filter
-            style={{ minWidth: '8rem' }}
-            filterPlaceholder="Search by Type"
-          />
-        </DataTable>
+        </Dialog>
       </div>
-      <div className={`min-h-screen ${data ? 'overflow-y-auto w-1/4': null}`}>
-        {data && <ShowSpace data={data} selectedKey={selectedKey} selectedDataType={selectedDataType}/>}
-      </div>
-
+      <div className={`overflow-hidden h-[80vh] ${data ? "flex gap-1" : null}`}>
+        <div className={` ${data ? " overflow-y-auto w-3/4" : null}`}>
+          <DataTable
+            value={dataObjects}
+            first={first}
+            showGridlines={true}
+            stripedRows
+            loading={!dataObjects || dataObjects.length === 0}
+            rowHover
+            onRowClick={(e) => handleGetData(e.data)}
+            paginator
+            size="small"
+            rows={rows}
+            rowsPerPageOptions={[10, 20]}
+            onPageChange={onPageChange}
+            tableStyle={{ minWidth: "50rem" }}
+          >
+            <Column sortable field="id" header="ID" />
+            <Column
+              sortable
+              field="key"
+              header="Content"
+              filter
+              filterPlaceholder="Search by value"
+            />
+            <Column
+              field="type"
+              header="Type"
+              filter
+              style={{ minWidth: "8rem" }}
+              filterPlaceholder="Search by Type"
+            />
+          </DataTable>
+        </div>
+        <div className={` ${data ? "overflow-y-auto w-1/4" : null}`}>
+          {data && (
+            <ShowSpace
+              data={data}
+              selectedKey={selectedKey}
+              selectedDataType={selectedDataType}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -21,5 +21,9 @@ export default function Home() {
     router.push("datatable");
   }, []);
 
-  return <main>{/* <Login/> */}</main>;
+  return (
+  <main>
+    <Login/>
+  </main>
+  )
 }
